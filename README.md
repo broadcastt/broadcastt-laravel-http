@@ -45,10 +45,10 @@ To configure only the [Broadcasting](https://laravel.com/docs/broadcasting) driv
 ```
 'broadcastt' => [
 	'driver' => 'broadcastt',
-	'id' => env('BORADCASTER_APP_ID'),
-	'key' => env('BORADCASTER_APP_KEY'),
-	'secret' => env('BORADCASTER_APP_SECRET'),
-	'cluster' => env('BORADCASTER_APP_CLUSTER'),
+	'id' => env('BROADCASTER_APP_ID'),
+	'key' => env('BROADCASTER_APP_KEY'),
+	'secret' => env('BROADCASTER_APP_SECRET'),
+	'cluster' => env('BROADCASTER_APP_CLUSTER'),
 ],
 ```
 
