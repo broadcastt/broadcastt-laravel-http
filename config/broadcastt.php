@@ -3,7 +3,7 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Pusher Connections
+    | Broadcastt Connections
     |--------------------------------------------------------------------------
     |
     | Here are each of the connections setup for your application. Example

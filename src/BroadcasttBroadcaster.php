@@ -64,7 +64,7 @@ class BroadcasttBroadcaster extends Broadcaster
     public function validAuthenticationResponse($request, $result)
     {
         if (Str::startsWith($request->channel_name, 'private')) {
-            return $this->decodePusherResponse(
+            return $this->decodeBroadcasttResponse(
                 $request,
                 $this->broadcastt->privateAuth(
                     $request->channel_name, $request->socket_id
@@ -72,7 +72,7 @@ class BroadcasttBroadcaster extends Broadcaster
             );
         }
 
-        return $this->decodePusherResponse(
+        return $this->decodeBroadcasttResponse(
             $request,
             $this->broadcastt->presenceAuth(
                 $request->channel_name, $request->socket_id, $request->user()->getAuthIdentifier(), $result
@@ -81,13 +81,13 @@ class BroadcasttBroadcaster extends Broadcaster
     }
 
     /**
-     * Decode the given Pusher response.
+     * Decode the given Broadcastt response.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  mixed  $response
      * @return array
      */
-    protected function decodePusherResponse($request, $response)
+    protected function decodeBroadcasttResponse($request, $response)
     {
         if (! $request->callback) {
             return json_decode($response, true);

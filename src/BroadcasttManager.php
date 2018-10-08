@@ -81,7 +81,7 @@ class BroadcasttManager
      * All request signing is handled automatically.
      *
      * @param string $path Path excluding /apps/APP_ID
-     * @param array $params API params (see http://pusher.com/docs/rest_api)
+     * @param array $params API params (see https://broadcastt.xyz/docs/References-‐-Rest-API )
      *
      * @throws BroadcasttException Throws exception if curl wasn't initialized correctly
      *
