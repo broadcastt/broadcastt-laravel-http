@@ -12,7 +12,7 @@ Realtime web applications are the future. [Broadcastt](https://broadcastt.xyz/) 
 
 This library is compatible with Laravel 5.x
 
-This is an HTTP for Laravel library. If you are looking for a client library or a different server library please check out our [list of libraries](https://broadcastt.xyz/docs/libraries).
+This is an HTTP library for Laravel. If you are looking for a client library or a different server library please check out our [list of libraries](https://broadcastt.xyz/docs/libraries).
 
 For tutorials and more in-depth documentation, visit our [official site](https://broadcastt.xyz/).
 
@@ -54,7 +54,7 @@ To configure only the [Broadcasting](https://laravel.com/docs/broadcasting) driv
 
 We recommend to use your `.env` to configure these data.
 
-If you want you can use the `PUSHER_APP_KEY`, `PUSHER_APP_SECRET`, `PUSHER_APP_ID` and `PUSHER_APP_CLUSTER` environment variables.
+You can also use the `PUSHER_APP_KEY`, `PUSHER_APP_SECRET`, `PUSHER_APP_ID` and `PUSHER_APP_CLUSTER` environment variables respectively.
 
 To configure other connection for the facade you should publish `config/broadcastt.php`.
 
