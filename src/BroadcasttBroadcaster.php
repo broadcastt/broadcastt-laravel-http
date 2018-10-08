@@ -112,7 +112,7 @@ class BroadcasttBroadcaster extends Broadcaster
         $socket = Arr::pull($payload, 'socket');
 
         $response = $this->broadcastt->event(
-            $this->formatChannels($channels), $event, $payload, $socket, true
+            $this->formatChannels($channels), $event, $payload, $socket
         );
 
         if ((is_array($response) && $response['status'] >= 200 && $response['status'] <= 299)
