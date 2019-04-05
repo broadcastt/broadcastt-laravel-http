@@ -23,7 +23,7 @@ For tutorials and more in-depth documentation, visit our [official site](https:/
 Require this package, with [Composer](https://getcomposer.org/)
 
 ```
-composer require nergal/broadcastt-laravel-http
+composer require broadcastt/broadcastt-laravel-http
 ```
 
 Since Laravel 5.5 our [service provider](http://laravel.com/docs/provider) is registered automatically. If you have an earlier version you have to register it. [Click here](https://laravel.com/docs/5.0/providers#registering-providers) if you don't know how to register a service provider.

@@ -1,5 +1,5 @@
 {
-    "name": "nergal/broadcastt-laravel-http",
+    "name": "broadcastt/broadcastt-laravel-http",
     "version": "0.1.1",
     "homepage": "https://broadcastt.xyz/",
     "description": "Laravel library for Broadcastt HTTP API",
