@@ -5,8 +5,10 @@
 
 namespace Broadcastt\Laravel;
 
+use Broadcastt\BroadcasttClient;
 use Illuminate\Broadcasting\Broadcasters\Broadcaster;
 use Illuminate\Broadcasting\BroadcastException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -16,24 +18,24 @@ class BroadcasttBroadcaster extends Broadcaster
     /**
      * The Broadcastt SDK instance.
      *
-     * @var \Broadcastt\Broadcastt
+     * @var BroadcasttClient
      */
-    private $broadcastt;
+    private $client;
 
     /**
      * BroadcasttBroadcaster constructor.
      *
-     * @param $broadcastt
+     * @param $client
      */
-    public function __construct($broadcastt)
+    public function __construct(BroadcasttClient $client)
     {
-        $this->broadcastt = $broadcastt;
+        $this->client = $client;
     }
 
     /**
      * Authenticate the incoming request for a given channel.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  Request $request
      * @return mixed
      */
     public function auth($request)
@@ -55,18 +57,16 @@ class BroadcasttBroadcaster extends Broadcaster
     /**
      * Return the valid authentication response.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  Request $request
      * @param  mixed $result
      * @return mixed
-     *
-     * @throws \Broadcastt\BroadcasttException
      */
     public function validAuthenticationResponse($request, $result)
     {
-        if (Str::startsWith($request->channel_name, 'private')) {
+        if (Str::startsWith($request->channel_name, 'private-')) {
             return $this->decodeBroadcasttResponse(
                 $request,
-                $this->broadcastt->privateAuth(
+                $this->client->privateAuth(
                     $request->channel_name, $request->socket_id
                 )
             );
@@ -74,7 +74,7 @@ class BroadcasttBroadcaster extends Broadcaster
 
         return $this->decodeBroadcasttResponse(
             $request,
-            $this->broadcastt->presenceAuth(
+            $this->client->presenceAuth(
                 $request->channel_name, $request->socket_id, $request->user()->getAuthIdentifier(), $result
             )
         );
@@ -83,13 +83,13 @@ class BroadcasttBroadcaster extends Broadcaster
     /**
      * Decode the given Broadcastt response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @param  mixed  $response
      * @return array
      */
     protected function decodeBroadcasttResponse($request, $response)
     {
-        if (! $request->callback) {
+        if (! $request->input('callback', false)) {
             return json_decode($response, true);
         }
 
@@ -104,24 +104,29 @@ class BroadcasttBroadcaster extends Broadcaster
      * @param  string $event
      * @param  array $payload
      * @return void
-     *
-     * @throws \Broadcastt\BroadcasttException
      */
     public function broadcast(array $channels, $event, array $payload = [])
     {
         $socket = Arr::pull($payload, 'socket');
 
-        $response = $this->broadcastt->event(
+        $success = $this->client->trigger(
             $this->formatChannels($channels), $event, $payload, $socket
         );
 
-        if ((is_array($response) && $response['status'] >= 200 && $response['status'] <= 299)
-            || $response === true) {
+        if ($success === true) {
             return;
         }
 
         throw new BroadcastException(
-            is_bool($response) ? 'Failed to connect to Broadcastt.' : $response['body']
+            is_bool($success) ? 'Failed to connect to Broadcastt.' : $success['body']
         );
+    }
+
+    /**
+     * @return BroadcasttClient
+     */
+    public function getClient()
+    {
+        return $this->client;
     }
 }

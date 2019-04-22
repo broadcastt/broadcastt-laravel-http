@@ -5,52 +5,22 @@
 
 namespace Broadcastt\Laravel;
 
-use Broadcastt\Broadcastt;
+use Broadcastt\BroadcasttClient;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Broadcast;
 
 class BroadcasttServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        \Broadcast::extend('broadcastt', function ($app, $config) {
-            $config = config('broadcastt.connections.default', $config);
+        Broadcast::extend('broadcastt', function ($app, $config) {
+            /** @var $app \Illuminate\Contracts\Foundation\Application */
 
-            if (array_key_exists('cluster', $config)) {
-                $broadcastt = new Broadcastt($config['id'], $config['key'], $config['secret'], $config['cluster']);
-            } else {
-                $broadcastt = new Broadcastt($config['id'], $config['key'], $config['secret']);
-            }
+            /** @var BroadcasttFactory $factory */
+            $factory = $app->make(BroadcasttFactory::class);
+            $client = $factory->create($config);
 
-            if (array_key_exists('encrypted', $config) && $config['encrypted']) {
-                $broadcastt->setScheme('https');
-                $broadcastt->setPort(443);
-            }
-
-            if (array_key_exists('debug', $config)) {
-                $broadcastt->setDebug($config['debug']);
-            }
-
-            if (array_key_exists('scheme', $config)) {
-                $broadcastt->setScheme($config['scheme']);
-            }
-
-            if (array_key_exists('host', $config)) {
-                $broadcastt->setHost($config['host']);
-            }
-
-            if (array_key_exists('port', $config)) {
-                $broadcastt->setPort($config['port']);
-            }
-
-            if (array_key_exists('timeout', $config)) {
-                $broadcastt->setTimeout($config['timeout']);
-            }
-
-            if (array_key_exists('curl_options', $config)) {
-                $broadcastt->setCurlOptions($config['curl_options']);
-            }
-
-            return new BroadcasttBroadcaster($broadcastt);
+            return new BroadcasttBroadcaster($client);
         });
 
         $this->setupConfig();
@@ -74,8 +44,22 @@ class BroadcasttServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('broadcastt', function () {
-            return new BroadcasttManager(\Broadcast::driver('broadcastt'));
+        $this->app->singleton(BroadcasttFactory::class, function () {
+            return new BroadcasttFactory();
+        });
+
+        $this->app->singleton(BroadcasttManager::class, function ($app) {
+            /** @var BroadcasttFactory $factory */
+            $factory = $this->app->make(BroadcasttFactory::class);
+
+            return new BroadcasttManager($factory, $app->config);
+        });
+
+        $this->app->singleton(BroadcasttClient::class, function () {
+            /** @var BroadcasttManager $manager */
+            $manager = $this->app->make(BroadcasttManager::class);
+
+            return $manager->connection();
         });
     }
 
@@ -87,7 +71,9 @@ class BroadcasttServiceProvider extends ServiceProvider
     public function provides()
     {
         return [
-            'broadcastt',
+            BroadcasttManager::class,
+            BroadcasttFactory::class,
+            BroadcasttClient::class,
         ];
     }
 }

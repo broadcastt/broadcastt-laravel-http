@@ -5,90 +5,132 @@
 
 namespace Broadcastt\Laravel;
 
-use Broadcastt\BroadcasttException;
+use Broadcastt\BroadcasttClient;
+use Illuminate\Config\Repository;
+use Illuminate\Support\Arr;
+use InvalidArgumentException;
+use Illuminate\Contracts\Broadcasting\Factory as FactoryContract;
 
-class BroadcasttManager
+/**
+ * @mixin BroadcasttClient
+ */
+class BroadcasttManager implements FactoryContract
 {
     /**
-     * @var \Broadcastt\Broadcastt[]
+     * @var Repository
      */
-    private $connections = [];
+    private $config;
 
     /**
-     * @var string The name of the default connection
+     * @var BroadcasttFactory
      */
-    protected $default;
+    private $factory;
 
-    public function __construct($defaultConnection)
+    /**
+     * @var BroadcasttClient[]
+     */
+    private $clients = [];
+
+    public function __construct(BroadcasttFactory $factory, Repository $config)
     {
-        $this->default = 'default';
-
-        $this->connections[$this->default] = $defaultConnection;
+        $this->factory = $factory;
+        $this->config = $config;
     }
 
     /**
-     * Returns a connection instance
+     * Get a client instance.
      *
-     * @param string $connection Name of the connection
-     *
-     * @return \Broadcastt\Broadcastt A connection instance
+     * @param string|null $name
+     * @return BroadcasttClient
      */
-    public function on($connection = null)
+    public function connection($name = null)
     {
-        if (is_null($connection)) {
-            return $this->connections[$this->default];
+        return $this->client($name);
+    }
+
+    /**
+     * Get a client instance.
+     *
+     * @param string|null $name
+     * @return BroadcasttClient
+     */
+    public function client($name = null)
+    {
+        if (!array_key_exists($name, $this->clients)) {
+            $this->clients[$name] = $this->makeClient($name);
         }
 
-        return $this->connections[$connection];
+        return $this->clients[$name];
     }
 
     /**
-     * Trigger an event by providing event name and payload.
-     * Optionally provide a socket ID to exclude a client (most likely the sender).
+     * Make the connection instance.
      *
-     * @param array|string $channels A channel name or an array of channel names to publish the event on.
-     * @param string $name Name of the event
-     * @param mixed $data Event data
-     * @param string|null $socketId [optional]
-     * @param bool $jsonEncoded [optional]
+     * @param string $name
      *
-     * @throws BroadcasttException Throws exception if $channels is an array of size 101 or above or $socketId is invalid
-     *
-     * @return bool|array
+     * @return BroadcasttClient
      */
-    public function event($channels, $name, $data, $socketId = null, $jsonEncoded = false)
+    private function makeClient($name)
     {
-        return $this->on($this->default)->event($channels, $name, $data, $socketId, $jsonEncoded);
+        $config = $this->getClientConfig($name);
+
+        return $this->factory->create($config);
     }
 
     /**
-     * Trigger multiple events at the same time.
+     * Get the configuration for a connection.
      *
-     * @param array $batch [optional] An array of events to send
-     * @param bool $encoded [optional] Defines if the data is already encoded
+     * @param string|null $name
      *
-     * @throws BroadcasttException Throws exception if curl wasn't initialized correctly
+     * @throws \InvalidArgumentException
      *
-     * @return array|bool|string
+     * @return array
      */
-    public function eventBatch($batch = [], $encoded = false)
+    public function getClientConfig(string $name = null)
     {
-        return $this->on($this->default)->eventBatch($batch, $encoded);
+        $name = $name ?: $this->getDefaultClient();
+
+        $connections = $this->config->get('broadcastt.connections');
+
+        if (!is_array($config = Arr::get($connections, $name)) && !$config) {
+            throw new InvalidArgumentException("Connection [$name] not configured.");
+        }
+
+        $config['name'] = $name;
+
+        return $config;
     }
 
     /**
-     * GET arbitrary REST API resource using a synchronous http client.
-     * All request signing is handled automatically.
+     * Get the default client name.
      *
-     * @param string $path Path excluding /apps/APP_ID
-     * @param array $params API params (see https://broadcastt.xyz/docs/References-‐-Rest-API )
-     *
-     * @throws BroadcasttException Throws exception if curl wasn't initialized correctly
-     *
-     * @return array|bool See Broadcastt API docs
+     * @return string
      */
-    public function get($path, $params = [])
+    public function getDefaultClient()
     {
-        return $this->on($this->default)->get($path, $params);
+        return $this->config->get('broadcastt.default');
+    }
+
+    /**
+     * Set the default client name.
+     *
+     * @param string $name The client name
+     * @return void
+     */
+    public function setDefaultClient($name)
+    {
+        $this->config->set('broadcastt.default', $name);
+    }
+
+    /**
+     * Dynamically call the default client instance.
+     *
+     * @param string $method
+     * @param array $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        return $this->connection()->$method(...$parameters);
     }
 }

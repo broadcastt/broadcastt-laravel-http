@@ -10,11 +10,11 @@ Realtime web applications are the future. [Broadcastt](https://broadcastt.xyz/) 
 >
 > Major version zero (0.y.z) is for initial development. Anything may change at any time. The public API should not be considered stable.
 
-This library is compatible with Laravel 5.x
+This library is compatible with Laravel 5.5+
 
 This is an HTTP library for Laravel. If you are looking for a client library or a different server library please check out our [list of libraries](https://broadcastt.xyz/docs/libraries).
 
-For tutorials and more in-depth documentation, visit our [official site](https://broadcastt.xyz/).
+For tutorials and more in-depth documentation, visit the [official site](https://broadcastt.xyz/).
 
 ## Documentation
 
@@ -26,13 +26,13 @@ Require this package, with [Composer](https://getcomposer.org/)
 composer require broadcastt/broadcastt-laravel-http
 ```
 
-Since Laravel 5.5 our [service provider](http://laravel.com/docs/provider) is registered automatically. If you have an earlier version you have to register it. [Click here](https://laravel.com/docs/5.0/providers#registering-providers) if you don't know how to register a service provider.
+The Broadcastt [service provider](http://laravel.com/docs/provider) is registered automatically.
 
 ```
 Broadcastt\Laravel\BroadcasttServiceProvider
 ``` 
 
-If you want you can register our [facade](http://laravel.com/docs/facades).
+If you want you can register the Broadcastt [facade](http://laravel.com/docs/facades).
 
 ```
 'Broadcastt' => Broadcastt\Laravel\Facades\Broadcastt::class
@@ -40,7 +40,7 @@ If you want you can register our [facade](http://laravel.com/docs/facades).
 
 ### Configuration
 
-To configure only the [Broadcasting](https://laravel.com/docs/broadcasting) driver and the default connection for the facade you have to modify `config/broadcasting.php` as you have to ad an item to the `connections` array.
+To configure only the [Broadcasting](https://laravel.com/docs/broadcasting) driver you have to modify `config/broadcasting.php`. You have to have an item in the `connections` array with its driver set to `broadcastt`.
 
 ```
 'broadcastt' => [
@@ -52,7 +52,7 @@ To configure only the [Broadcasting](https://laravel.com/docs/broadcasting) driv
 ],
 ```
 
-We recommend to use your `.env` to configure these data.
+The recommended way is to use environment variables or use `.env` to configure these data.
 
 You can also use the `PUSHER_APP_KEY`, `PUSHER_APP_SECRET`, `PUSHER_APP_ID` and `PUSHER_APP_CLUSTER` environment variables respectively.
 
@@ -62,7 +62,7 @@ To configure other connection for the facade you should publish `config/broadcas
 php artisan vendor:publish --provider="Broadcastt\Laravel\BroadcasttServiceProvider"
 ```
 
-Here you can define a connection with the name `default` and override the one in `config/broadcasting.php`.
+In the published `config/broadcasting.php` file you can define many connections.
 
 #### `id` (Integer)
 
@@ -84,7 +84,7 @@ Default value: `eu`
 
 ### Additional options
 
-#### `encrypted` (String)
+#### `useTLS` (String)
 
 Short way to change `scheme` to `https` and `port` to `443`
 
@@ -124,31 +124,29 @@ The http timeout
 
 Default value: `30`
 
-#### `curlOptions` (Mixed[])
-
-Options for the curl instance
-
-Default value: `[]`
-
 ### Usage of broadcaster
 
-`BroadcasttServiceProvider` registers a driver for Broadcasting, so if you set the default configuration in `config/broadcasting.php` you can use `broadcastt` driver for broadcasting.
+`BroadcasttServiceProvider` registers a driver for Broadcasting, so in `config/broadcasting.php` you can use `broadcastt` driver for broadcasting.
 
 For example you can set `BROADCAST_DRIVER` environment variable to `broadcastt`.
 
 ### Usage of facade
 
-#### `on($connection = null)`
+#### `client($connection = null)`
 
-Returns a connection instance
+Returns a client instance
 
-#### `event($channels, $name, $data, $socketId = null, $jsonEncoded = false)`
+#### `connection($connection = null)`
+
+Alias for `client($connection = null)`
+
+#### `trigger($channels, $name, $data, $socketId = null, $jsonEncoded = false)`
 
 Trigger an event by providing event name and payload.
 
 Optionally provide a socket ID to exclude a client (most likely the sender).
 
-#### `eventBatch($batch = [], $encoded = false)`
+#### `triggerBatch($batch = [], $encoded = false)`
 
 Trigger multiple events at the same time.
 
@@ -160,4 +158,4 @@ All request signing is handled automatically.
 
 ## Contributing
 
-We welcome everyone who would help us to make this library "Harder, Better, Faster, Stronger".
+Everyone is welcome who would help to make this library "Harder, Better, Faster, Stronger".

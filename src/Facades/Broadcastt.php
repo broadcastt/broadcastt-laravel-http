@@ -2,6 +2,7 @@
 
 namespace Broadcastt\Laravel\Facades;
 
+use Broadcastt\Laravel\BroadcasttManager;
 use Illuminate\Support\Facades\Facade;
 
 class Broadcastt extends Facade
@@ -13,6 +14,6 @@ class Broadcastt extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'broadcastt';
+        return BroadcasttManager::class;
     }
 }
