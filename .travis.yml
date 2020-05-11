@@ -3,6 +3,7 @@ language: php
 php:
   - '7.2'
   - '7.3'
+  - '7.4'
 
 cache:
   directories:
@@ -14,7 +15,8 @@ env:
     - ILLUMINATE_VERSION=5.6.* TESTBENCH_VERSION=3.6.*
     - ILLUMINATE_VERSION=5.7.* TESTBENCH_VERSION=3.7.*
     - ILLUMINATE_VERSION=5.8.* TESTBENCH_VERSION=3.8.*
-    - ILLUMINATE_VERSION=6.0.* TESTBENCH_VERSION=4.0.*
+    - ILLUMINATE_VERSION=6.* TESTBENCH_VERSION=4.*
+    - ILLUMINATE_VERSION=7.* TESTBENCH_VERSION=5.*
 
 before_install:
   - composer require illuminate/broadcasting:${ILLUMINATE_VERSION} illuminate/support:${ILLUMINATE_VERSION} --no-update
