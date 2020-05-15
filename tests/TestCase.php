@@ -19,15 +19,6 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             'secret' => env('BROADCASTER_APP_SECRET'),
             'cluster' => env('BROADCASTER_APP_CLUSTER'),
         ]);
-
-        $config->set('broadcastt.default', 'main');
-
-        $config->set('broadcastt.connections.main', [
-            'id' => env('BROADCASTER_APP_ID'),
-            'key' => env('BROADCASTER_APP_KEY'),
-            'secret' => env('BROADCASTER_APP_SECRET'),
-            'cluster' => env('BROADCASTER_APP_CLUSTER'),
-        ]);
     }
 
     protected function getPackageProviders($app)
