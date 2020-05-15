@@ -35,6 +35,7 @@ class BroadcasttServiceProvider extends ServiceProvider
     {
         $source = realpath(__DIR__.'/../config/broadcastt.php');
         $this->publishes([$source => config_path('broadcastt.php')]);
+        $this->mergeConfigFrom($source, 'broadcastt');
     }
 
     /**
