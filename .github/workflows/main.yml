@@ -1,0 +1,58 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    branches:
+      - 'master'
+
+jobs:
+  build:
+    name: PHP ${{ matrix.php }} - Illuminate ${{ matrix.illuminate }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        php:
+          - '7.2'
+          - '7.3'
+          - '7.4'
+        illuminate:
+          - '5.5.*'
+          - '5.6.*'
+          - '5.7.*'
+          - '5.8.*'
+          - '^6.0'
+          - '^7.0'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.composer/cache/files
+          key: php-${{ matrix.php }}-${{ matrix.illuminate }}-composer-${{ hashFiles('composer.json') }}
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: xdebug
+
+      - name: Validate composer.json
+        run: composer validate
+
+      - name: Require Illuminate ${{ matrix.illuminate }}
+        run: composer require illuminate/broadcasting:${{ matrix.illuminate }} illuminate/support:${{ matrix.illuminate }} --no-interaction --no-update
+
+      - name: Install dependencies
+        run: composer update --prefer-stable --prefer-dist --no-interaction --no-suggest
+
+      - name: Run test
+        run: ./vendor/bin/phpunit --coverage-clover ./coverage.xml
+
+      - uses: codecov/codecov-action@v1
+        with:
+          flags: phpunit
+          fail_ci_if_error: true
