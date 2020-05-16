@@ -1,6 +1,5 @@
 {
     "name": "broadcastt/broadcastt-laravel-http",
-    "version": "0.2.3",
     "homepage": "https://broadcastt.xyz/",
     "description": "Laravel library for Broadcastt HTTP API",
     "keywords": ["broadcastt", "broadcast", "events", "laravel", "messaging", "publish", "push", "rest", "realtime", "real-time", "real time", "trigger"],
