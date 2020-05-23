@@ -5,7 +5,7 @@
     "keywords": ["broadcastt", "broadcast", "events", "laravel", "messaging", "publish", "push", "rest", "realtime", "real-time", "real time", "trigger"],
     "license": "MIT",
     "require": {
-        "broadcastt/broadcastt-php-http": "^0.3",
+        "broadcastt/broadcastt-php-http": "^0.4",
         "illuminate/broadcasting": "5.5.*|5.6.*|5.7.*|5.8.*|^6.0|^7.0",
         "illuminate/support": "5.5.*|5.6.*|5.7.*|5.8.*|^6.0|^7.0",
         "php": "^7.2"
