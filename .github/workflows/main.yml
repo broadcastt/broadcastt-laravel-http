@@ -26,6 +26,10 @@ jobs:
           - '5.8.*'
           - '^6.0'
           - '^7.0'
+          - '^8.0'
+        exclude:
+          - php: '7.2'
+            illuminate: '^8.0'
 
     steps:
       - uses: actions/checkout@v2
