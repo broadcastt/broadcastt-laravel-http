@@ -85,7 +85,8 @@ class BroadcasttBroadcaster extends Broadcaster
      *
      * @param  Request  $request
      * @param  mixed  $response
-     * @return array
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     protected function decodeBroadcasttResponse($request, $response)
     {
