@@ -31,11 +31,9 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * Get the service provider class.
      *
-     * @param \Illuminate\Contracts\Foundation\Application $app
-     *
      * @return string
      */
-    protected function getServiceProviderClass($app)
+    protected function getServiceProviderClass()
     {
         return BroadcasttServiceProvider::class;
     }
