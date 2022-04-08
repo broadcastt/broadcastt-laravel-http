@@ -1,8 +1,8 @@
 # Broadcastt
 
 [![](https://img.shields.io/github/workflow/status/broadcastt/broadcastt-laravel-http/Test?style=flat-square)](https://github.com/broadcastt/broadcastt-laravel-http/actions?query=workflow%3ATest)
-[![codecov](https://codecov.io/gh/broadcastt/broadcastt-laravel-http/branch/master/graph/badge.svg)](https://codecov.io/gh/broadcastt/broadcastt-laravel-http)
-[![](https://img.shields.io/github/license/broadcastt/broadcastt-laravel-http?style=flat-square)](https://github.com/broadcastt/broadcastt-laravel-http/blob/master/LICENSE)
+[![codecov](https://codecov.io/gh/broadcastt/broadcastt-laravel-http/branch/main/graph/badge.svg)](https://codecov.io/gh/broadcastt/broadcastt-laravel-http)
+[![](https://img.shields.io/github/license/broadcastt/broadcastt-laravel-http?style=flat-square)](https://github.com/broadcastt/broadcastt-laravel-http/blob/main/LICENSE)
 [![](https://img.shields.io/packagist/v/broadcastt/broadcastt-laravel-http?style=flat-square)](https://packagist.org/packages/broadcastt/broadcastt-laravel-http)
 
 Realtime web applications are the future. [Broadcastt](https://broadcastt.xyz/) provides tools to help developers create realtime applications.
