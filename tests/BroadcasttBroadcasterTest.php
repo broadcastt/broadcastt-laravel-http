@@ -3,12 +3,15 @@
 namespace Tests;
 
 use Illuminate\Broadcasting\BroadcastException;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 use Mockery;
 use Broadcastt\BroadcasttClient;
 use Broadcastt\Laravel\BroadcasttBroadcaster;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class BroadcasttBroadcasterTest extends \PHPUnit\Framework\TestCase
@@ -44,7 +47,7 @@ class BroadcasttBroadcasterTest extends \PHPUnit\Framework\TestCase
             ->once();
 
         $this->broadcaster->auth(
-            $this->getMockRequestWithUserForChannel('private-test')
+            $this->createRequestWithUserForChannel('private-test')
         );
     }
 
@@ -57,7 +60,7 @@ class BroadcasttBroadcasterTest extends \PHPUnit\Framework\TestCase
         });
 
         $this->broadcaster->auth(
-            $this->getMockRequestWithUserForChannel('private-test')
+            $this->createRequestWithUserForChannel('private-test')
         );
     }
 
@@ -70,7 +73,7 @@ class BroadcasttBroadcasterTest extends \PHPUnit\Framework\TestCase
         });
 
         $this->broadcaster->auth(
-            $this->getMockRequestWithoutUserForChannel('private-test')
+            $this->createRequestWithoutUserForChannel('private-test')
         );
     }
 
@@ -85,7 +88,7 @@ class BroadcasttBroadcasterTest extends \PHPUnit\Framework\TestCase
             ->once();
 
         $this->broadcaster->auth(
-            $this->getMockRequestWithUserForChannel('presence-test')
+            $this->createRequestWithUserForChannel('presence-test')
         );
     }
 
@@ -97,7 +100,7 @@ class BroadcasttBroadcasterTest extends \PHPUnit\Framework\TestCase
         });
 
         $this->broadcaster->auth(
-            $this->getMockRequestWithUserForChannel('presence-test')
+            $this->createRequestWithUserForChannel('presence-test')
         );
     }
 
@@ -110,13 +113,13 @@ class BroadcasttBroadcasterTest extends \PHPUnit\Framework\TestCase
         });
 
         $this->broadcaster->auth(
-            $this->getMockRequestWithoutUserForChannel('presence-test')
+            $this->createRequestWithoutUserForChannel('presence-test')
         );
     }
 
     public function testValidAuthenticationResponseCallClientPrivateAuthMethodWithPrivateChannel()
     {
-        $request = $this->getMockRequestWithUserForChannel('private-test');
+        $request = $this->createRequestWithUserForChannel('private-test');
 
         $data = [
             'auth' => 'abcd:efgh',
@@ -134,7 +137,7 @@ class BroadcasttBroadcasterTest extends \PHPUnit\Framework\TestCase
 
     public function testValidAuthenticationResponseCallClientPresenceAuthMethodWithPresenceChannel()
     {
-        $request = $this->getMockRequestWithUserForChannel('presence-test');
+        $request = $this->createRequestWithUserForChannel('presence-test');
 
         $data = [
             'auth' => 'abcd:efgh',
@@ -179,22 +182,26 @@ class BroadcasttBroadcasterTest extends \PHPUnit\Framework\TestCase
      * @param string $channel
      * @return Request
      */
-    protected function getMockRequestWithUserForChannel($channel)
+    protected function createRequestWithUserForChannel($channel)
     {
-        $request = Mockery::mock(Request::class)->makePartial();
-        $request->channel_name = $channel;
-        $request->socket_id = 'abcd.1234';
+        $symfonyRequest = SymfonyRequest::create(
+            '',
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: json_encode([
+                'channel_name' => $channel,
+                'socket_id' => 'abcd.1234',
+            ]),
+        );
 
-        $request->shouldReceive('input')
-            ->with('callback', false)
-            ->andReturn(false);
+        $request = Request::createFromBase($symfonyRequest);
 
-        $user = Mockery::mock('User');
-        $user->shouldReceive('getAuthIdentifier')
-            ->andReturn(42);
-
-        $request->shouldReceive('user')
-            ->andReturn($user);
+        $request->setUserResolver(function () {
+            $user = new User();
+            $user->id = 42;
+            return $user;
+        });
 
         return $request;
     }
@@ -203,13 +210,20 @@ class BroadcasttBroadcasterTest extends \PHPUnit\Framework\TestCase
      * @param string $channel
      * @return Request
      */
-    protected function getMockRequestWithoutUserForChannel($channel)
+    protected function createRequestWithoutUserForChannel($channel)
     {
-        $request = Mockery::mock(Request::class);
-        $request->channel_name = $channel;
+        $symfonyRequest = SymfonyRequest::create(
+            '',
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: json_encode([
+                'channel_name' => $channel,
+                'socket_id' => 'abcd.1234',
+            ]),
+        );
 
-        $request->shouldReceive('user')
-            ->andReturn(null);
+        $request = Request::createFromBase($symfonyRequest);
 
         return $request;
     }

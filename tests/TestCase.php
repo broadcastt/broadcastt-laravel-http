@@ -33,7 +33,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
      *
      * @return string
      */
-    protected function getServiceProviderClass()
+    protected static function getServiceProviderClass(): string
     {
         return BroadcasttServiceProvider::class;
     }
