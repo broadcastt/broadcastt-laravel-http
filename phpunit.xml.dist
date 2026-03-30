@@ -1,38 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
-         beStrictAboutTestsThatDoNotTestAnything="true"
-         beStrictAboutOutputDuringTests="true"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         failOnWarning="true"
-         processIsolation="false"
-         stopOnError="false"
-         stopOnFailure="false"
-         verbose="true"
->
-    <testsuites>
-        <testsuite name="Broadcastt Test Suite">
-            <directory>./tests/</directory>
-        </testsuite>
-    </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./src</directory>
-        </whitelist>
-    </filter>
-    <php>
-        <env name="BROADCASTER_APP_ID" value="testid"/>
-        <env name="BROADCASTER_APP_KEY" value="testkey"/>
-        <env name="BROADCASTER_APP_SECRET" value="testsecret"/>
-        <env name="BROADCASTER_APP_CLUSTER" value="testcluster"/>
-    </php>
-    <logging>
-        <log type="tap" target="build/report.tap"/>
-        <log type="junit" target="build/report.junit.xml"/>
-        <log type="coverage-text" target="build/coverage.txt"/>
-        <log type="coverage-clover" target="build/logs/clover.xml"/>
-    </logging>
+<phpunit backupGlobals="false" beStrictAboutTestsThatDoNotTestAnything="true" beStrictAboutOutputDuringTests="true" colors="true" failOnWarning="true" processIsolation="false" stopOnError="false" stopOnFailure="false" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
+  <coverage>
+    <report>
+      <clover outputFile="build/logs/clover.xml"/>
+      <text outputFile="build/coverage.txt"/>
+    </report>
+  </coverage>
+  <testsuites>
+    <testsuite name="Broadcastt Test Suite">
+      <directory>./tests/</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <env name="BROADCASTER_APP_ID" value="testid"/>
+    <env name="BROADCASTER_APP_KEY" value="testkey"/>
+    <env name="BROADCASTER_APP_SECRET" value="testsecret"/>
+    <env name="BROADCASTER_APP_CLUSTER" value="testcluster"/>
+  </php>
+  <logging>
+    <junit outputFile="build/report.junit.xml"/>
+  </logging>
+  <source>
+    <include>
+      <directory suffix=".php">./src</directory>
+    </include>
+  </source>
 </phpunit>
