@@ -54,8 +54,10 @@ class BroadcasttManager implements FactoryContract
      * @param string|null $name
      * @return BroadcasttClient
      */
-    public function client($name = null)
+    public function client(?string $name = null)
     {
+        $name = $name ?: $this->getDefaultClient();
+
         if (!array_key_exists($name, $this->clients)) {
             $this->clients[$name] = $this->makeClient($name);
         }
@@ -86,7 +88,7 @@ class BroadcasttManager implements FactoryContract
      *
      * @return array
      */
-    public function getClientConfig(string $name = null)
+    public function getClientConfig(?string $name = null)
     {
         $name = $name ?: $this->getDefaultClient();
 
